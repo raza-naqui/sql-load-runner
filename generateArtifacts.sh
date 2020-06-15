@@ -31,6 +31,8 @@ echo -ne "" > myCron
         query=`echo $QUERY | sed 's/ *$//g'`
         rowCounter=$(( $rowCounter + 1 ))
         cronExpression=$(date -j -f '%d/%m/%Y %H:%M' "$queryTime" +'%M %H %d %m *'); 
+	#The above expression won't work in some versions of Linux, in such case please use the below line
+        #cronExpression=$(date +'%M %H %d %m *' -d "$queryTime");
         echo "${query}" > "./sql/query-${rowCounter}.sql"
         echo "${cronExpression} ./runSqlFile.sh ./sql/query-${rowCounter}.sql ./logs/query-${rowCounter}.log" >> myCron       
     done
