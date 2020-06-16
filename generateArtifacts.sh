@@ -29,10 +29,12 @@ echo -ne "" > myCron
     do
         queryTime=`echo $SUBMITTIME | sed 's/ *$//g'`
         query=`echo $QUERY | sed 's/ *$//g'`
-        rowCounter=$(( $rowCounter + 1 ))
-        cronExpression=$(date -j -f '%d/%m/%Y %H:%M' "$queryTime" +'%M %H %d %m *'); 
-	#The above expression won't work in some versions of Linux, in such case please use the below line
-        #cronExpression=$(date +'%M %H %d %m *' -d "$queryTime");
+        queryTime=$(echo $queryTime | awk -F/ '{printf "%s/%s/%s\n", $2, $1, $3}')
+	rowCounter=$(( $rowCounter + 1 ))
+        # Uncomment Below line for Mac and comment the other one (Linux)
+	# cronExpression=$(date -j -f '%d/%m/%Y %H:%M' "$queryTime" +'%M %H %d %m *'); 
+	# Below line is for Linux, if you want it to run on Mac, use the above line
+	cronExpression=$(date +'%M %H %d %m *' -d "$queryTime");
         echo "${query}" > "./sql/query-${rowCounter}.sql"
         echo "${cronExpression} ./runSqlFile.sh ./sql/query-${rowCounter}.sql ./logs/query-${rowCounter}.log" >> myCron       
     done
